@@ -1,0 +1,118 @@
+#!/bin/sh
+
+export PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+NAME="logstash"
+DESC="Logstash service"
+AGENT_HOME=/opt/logstash
+PIDFILE=/var/run/${NAME}.pid
+DAEMON=${AGENT_HOME}/bin/logstash
+LOGFILE="/var/log/logstash.log"
+STOPTIMEOUT=120
+CONFIG=$2
+if [ -z ${CONFIG} ]; then
+    CONFIG=/etc/logstash/logstash.conf
+fi
+DAEMON_OPTS="-f ${CONFIG} $3"
+test -x $DAEMON || exit 0
+
+set -e
+
+. /lib/lsb/init-functions
+
+kill_by_file() {
+  local sig="$1"
+  shift 1
+  local pid="$(cat "$@" 2>/dev/null || true)"
+  if [ -n "${pid}" ]; then
+    if /bin/kill "${sig}" "${pid}" 1>/dev/null 2>&1; then
+      return 0
+    else
+      return 2
+    fi
+  else
+    return 1
+  fi
+}
+
+do_start() {
+  ulimit -n 65536 1>/dev/null 2>&1 || true
+  if kill_by_file -0 "${PIDFILE}"; then
+    return 1
+  else
+    start-stop-daemon -m --start --pidfile ${PIDFILE} --exec ${DAEMON} -- ${DAEMON_OPTS}>>${LOGFILE} 2<&1&
+    if [ $?==0 ]; then
+        return 1
+    else
+        return 3
+    fi
+  fi
+}
+
+do_stop() {
+   if start-stop-daemon --stop --quiet --oknodo --pidfile ${PIDFILE}; then
+      return 1
+   fi
+   return 3
+}
+
+do_restart() {
+  local val=0
+  do_stop || val="$?"
+  case "${val}" in
+  1 )
+    if do_start; then
+      return 1
+    fi
+    ;;
+  * )
+    return 1
+    ;;
+  esac
+}
+
+case "$1" in
+    start)
+        log_action_msg "Starting ${DESC}: "
+        do_start || RETVAL="$?"
+        case "$RETVAL" in
+          0 | 1 )
+            log_success_msg "${NAME}"
+            ;;
+          * )
+            log_failure_msg "${NAME}"
+            exit 1
+            ;;
+          esac
+        ;;
+    stop)
+        echo -n "Stopping $DESC: "
+        do_stop || RETVAL="$?"
+        case "$RETVAL" in
+          1 )
+            rm ${PIDFILE}
+            log_success_msg "Ok"
+            ;;
+          * )
+            log_failure_msg "Failed"
+            exit 1
+            ;;
+          esac
+          ;;
+    restart|force-reload)
+        echo -n "Restarting $DESC: "
+        if do_restart; then
+            log_success_msg "ok"
+        else
+            log_failure_msg "Failed"
+            exit 1
+        fi
+        ;;
+    *)
+        N=/etc/init.d/$NAME
+        echo "Usage: $N {start|stop|restart|force-reload}" >&2
+        exit 1
+        ;;
+esac
+ 
+exit 0

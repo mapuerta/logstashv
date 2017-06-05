@@ -1,0 +1,4 @@
+WERKZEUGREQUESTTIMESTAMP %{MONTHDAY}/%{MONTH}/%{YEAR} %{TIME}
+WERKZEUGREQUEST %{IPORHOST:client} %{USER:ident} %{USER:auth} \[%{WERKZEUGREQUESTTIMESTAMP:request_timestamp}\] "%{WORD:request_type} %{URIPATHPARAM:request} HTTP/%{NUMBER:httpversion}" %{NUMBER:response} -
+ODOOMISC %{GREEDYDATA}
+ODOOLOG %{TIMESTAMP_ISO8601:timestamp} %{POSINT:pid} %{LOGLEVEL:loglevel} (?:%{USERNAME:database}|\?) %{PROG:module}: (?:%{WERKZEUGREQUEST}|%{ODOOMISC:misc})
