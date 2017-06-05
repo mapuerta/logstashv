@@ -22,4 +22,9 @@ if [ ! -d ${CHDIR}/${NAMEDIR} ]; then
     ln -sfv ${CHDIR}/${NAMEDIR}/logs/* /var/log/.
 fi
 
+
 cp logstashd ${INIT} && chmod +x ${INIT}/logstashd
+if [ ! -d /etc/logstash ]; then
+    mkdir /etc/logstash
+fi
+cp logstash.conf /etc/logstash/logstash.conf
