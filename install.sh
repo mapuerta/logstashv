@@ -2,10 +2,10 @@ CHDIR="/opt"
 NAMEDIR="logstash"
 VERSION="5.4.0"
 URL="https://artifacts.elastic.co/downloads/logstash/logstash-${VERSION}.zip"
-DPKG_DEPEND="openjdk-8-jre wget ruby rubygems-integration"
+DPKG_DEPEND="bc openjdk-8-jre wget ruby rubygems-integration"
 INIT=/etc/init.d/
 
-apt-get update && apt-get install ${DPKG_DEPEND} -y
+apt-get update && apt-get install ${DPKG_DEPEND} -y -qq
 
 JAVAVERSION=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}'| cut -c 1-3)
 
