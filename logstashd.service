@@ -1,0 +1,13 @@
+[Unit]
+Description=Service logstash
+After=network.target mysql.service
+
+[Service]
+User=root
+ExecStart=/opt/logstash/bin/logstash
+KillMode=process
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+Alias=logstashd.service
