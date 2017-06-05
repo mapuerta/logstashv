@@ -29,3 +29,4 @@ if [ ! -d /etc/logstash ]; then
     mkdir /etc/logstash
 fi
 cp logstash.conf /etc/logstash/logstash.conf
+cp -rfv patterns /etc/logstash/
