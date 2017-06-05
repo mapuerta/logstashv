@@ -13,6 +13,7 @@ fi
 wget ${URL} -O ${CHDIR}/${NAMEDIR}.zip
 unzip ${CHDIR}/${NAMEDIR}.zip -d ${CHDIR}
 mv ${CHDIR}/${NAMEDIR}-${VERSION} ${CHDIR}/${NAMEDIR}
-ln -sfv ${CHDIR}/${NAMEDIR}/logs/* /var/logs/.
+mkdir ${CHDIR}/${NAMEDIR}/logs
+ln -sfv ${CHDIR}/${NAMEDIR}/logs/* /var/log/.
 cp logstashd ${INIT} && chmod +x ${INIT}/logstashd
 
