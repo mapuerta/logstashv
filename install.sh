@@ -9,10 +9,11 @@ apt-get update && apt-get install ${DPKG_DEPEND} -y
 
 JAVAVERSION=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}'| cut -c 1-3)
 
-if [ "$JAVAVERSION" < "1.8" ]; then
-    echo -n "The java version should be 1.8"
+if [ 1 -eq $(echo "(1.8 - ${JAVAVERSION}) > 0" | bc) ]; then
+    echo "The java version should be 1.8\n"
     exit 1
 fi
+
 
 if [ ! -d ${CHDIR}/${NAMEDIR} ]; then
     wget ${URL} -O ${CHDIR}/${NAMEDIR}.zip
