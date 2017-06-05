@@ -7,13 +7,19 @@ INIT=/etc/init.d/
 
 apt-get update && apt-get install ${DPKG_DEPEND} -y
 
-if [ -d ${CHDIR}/${NAMEDIR} ]; then
-    exit 0
-fi
-wget ${URL} -O ${CHDIR}/${NAMEDIR}.zip
-unzip ${CHDIR}/${NAMEDIR}.zip -d ${CHDIR}
-mv ${CHDIR}/${NAMEDIR}-${VERSION} ${CHDIR}/${NAMEDIR}
-mkdir ${CHDIR}/${NAMEDIR}/logs
-ln -sfv ${CHDIR}/${NAMEDIR}/logs/* /var/log/.
-cp logstashd ${INIT} && chmod +x ${INIT}/logstashd
+JAVAVERSION=$(java -version 2>&1 | awk -F '"' '/version/ {print $2}'| cut -c 1-3)
 
+if ["$JAVAVERSION" < "1.8"]; then
+    echo -n "The java version should be 1.8"
+    exit 1
+fi
+
+if [ ! -d ${CHDIR}/${NAMEDIR} ]; then
+    wget ${URL} -O ${CHDIR}/${NAMEDIR}.zip
+    unzip ${CHDIR}/${NAMEDIR}.zip -d ${CHDIR}
+    mv ${CHDIR}/${NAMEDIR}-${VERSION} ${CHDIR}/${NAMEDIR}
+    mkdir ${CHDIR}/${NAMEDIR}/logs
+    ln -sfv ${CHDIR}/${NAMEDIR}/logs/* /var/log/.
+fi
+
+cp logstashd ${INIT} && chmod +x ${INIT}/logstashd
