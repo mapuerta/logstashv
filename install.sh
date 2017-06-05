@@ -1,4 +1,4 @@
-CHDIR="/opt/"
+CHDIR="/opt"
 NAMEDIR="logstash"
 VERSION="5.4.0"
 URL="https://artifacts.elastic.co/downloads/logstash/logstash-${VERSION}.zip"
