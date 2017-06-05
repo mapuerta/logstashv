@@ -11,7 +11,7 @@ if [ -d ${CHDIR}/${NAMEDIR} ]; then
     exit 0
 fi
 wget ${URL} -O ${CHDIR}/${NAMEDIR}.zip
-unzip ${CHDIR}/${NAMEDIR}.zip
+unzip ${CHDIR}/${NAMEDIR}.zip -d ${CHDIR}
 mv ${CHDIR}/${NAMEDIR}-${VERSION} ${CHDIR}/${NAMEDIR}
 ln -sfv ${CHDIR}/${NAMEDIR}/logs/* /var/logs/.
 cp logstashd ${INIT} && chmod +x ${INIT}/logstashd
