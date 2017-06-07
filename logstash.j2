@@ -1,7 +1,7 @@
 input {
   file {
     type => "odoo"
-    path => "/paths/logs/odoo_stdout.log"
+    path => "{{ path_log }}"
     codec => multiline {
       pattern => "^%{TIMESTAMP_ISO8601} "
       negate => true
@@ -26,7 +26,7 @@ filter {
  
 output {
     udp {
-    host => "0.0.0.0"
+    host => "{{ server }}"
     port => 12201
     }
     stdout { codec => json }

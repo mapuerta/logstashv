@@ -108,6 +108,14 @@ case "$1" in
             exit 1
         fi
         ;;
+    status)
+       if kill_by_file -0 "${PIDFILE}"; then
+            log_success_msg "${NAME} is running"
+       else
+            log_failure_msg "${NAME} is not running"
+        exit 1
+       fi
+    ;;
     *)
         N=/etc/init.d/$NAME
         echo "Usage: $N {start|stop|restart|force-reload}" >&2

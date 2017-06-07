@@ -1,0 +1,53 @@
+- hosts: orchestv
+  sudo: yes
+  tasks:
+
+  - name: Add group logstash
+    group: name=logstash state=present
+
+  - name: Create logstash directory
+    file: path=/etc/logstash
+          state=directory
+          mode=0755
+  
+  - name: add repository java8
+    apt_repository: repo='ppa:openjdk-r/ppa' state=present
+
+  - name: Install Java8
+    apt: pkg=openjdk-8-jre state=installed update_cache=true
+
+  - name: Download Logstash
+    get_url: url=https://artifacts.elastic.co/downloads/logstash/logstash-{{ version }}.zip dest=/opt/
+
+  - name: Unzip logstash
+    command: unzip /opt/logstash-{{ version }} -d /opt/
+
+  - name: Remove old logstash
+    file: path=/opt/logstash state=absent
+  
+  - name: Rename logstash
+    command: mv /opt/logstash-{{ version }} /opt/logstash
+
+  - name: Copy configure file
+    template: src=./logstash.j2
+              dest=/etc/logstash/logstash.conf
+              owner=root
+              group=logstash
+              mode=0644
+              backup=yes
+
+  - name: Copy configure patterns
+    copy:  src=./patterns
+           dest=/etc/logstash/
+           owner=root
+           group=logstash
+           mode=0644
+           backup=yes
+
+  - name: Copy daemon logstash
+    copy:  src=./logstashd
+           dest=/etc/init.d/logstashd
+           owner=root
+           group=logstash
+           mode=0755
+           backup=yes
