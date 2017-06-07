@@ -17,7 +17,7 @@ filter {
     }
     grok {
       match => { "message" => "%{ODOOLOG}" }
-       patterns_dir => "./patterns/postfix"
+       patterns_dir => "/etc/logstash/patterns/postfix"
     }
 
   }
