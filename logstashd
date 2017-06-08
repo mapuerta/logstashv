@@ -41,7 +41,7 @@ do_start() {
     return 1
   else
     start-stop-daemon -m --start --pidfile ${PIDFILE} --exec ${DAEMON} -- ${DAEMON_OPTS}>>${LOGFILE} 2<&1&
-    if [ $?==0 ]; then
+    if kill_by_file -0 "${PIDFILE}"; then
         return 1
     else
         return 3
